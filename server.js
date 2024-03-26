@@ -1,55 +1,16 @@
-var { graphql, buildSchema, GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLInt } = require("graphql");
-var express = require("express");
-var { createHandler } = require("graphql-http/lib/use/express");
-var { ruruHTML } = require("ruru/server");
+import express from "express";
+import { ruruHTML } from "ruru/server";
 
-const User = new GraphQLObjectType({
-  name: "User",
-  fields: {
-    id: {
-      type: GraphQLInt,
-    },
-    name: {
-      type: GraphQLString,
-      resolve: (obj) => {
-        const name = obj.name.trim().toUpperCase();
-        if (obj.isAdmin) {
-          return `${name} (ADMIN)`;
-        }
-        return name;
-      },
-    },
-  },
-});
+import { createYoga } from "graphql-yoga";
+import { schema } from "./src/graphql/index.js";
 
-const schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: "Query",
-    fields: {
-      hello: {
-        type: GraphQLString,
-        resolve: () => {
-          return "Hello ";
-        },
-      },
-
-      user: {
-        type: User,
-        resolve: () => {
-          return {
-            id: 1,
-            name: "     John     ",
-            isAdmin: true,
-          };
-        },
-      },
-    },
-  }),
+const yoga = createYoga({
+  schema,
 });
 
 const app = express();
 
-app.all("/graphql", createHandler({ schema }));
+app.all("/graphql", yoga);
 
 app.get("/", (req, res) => {
   res.type("text/html");
