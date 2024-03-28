@@ -7,3 +7,20 @@ export const Typedef = /* GraphQL */ `
     name: String
   }
 `;
+
+export const resolvers = {
+  Query: {
+    user: () => {
+      return {
+        id: 1,
+        name: "John Doe",
+      };
+    },
+  },
+
+  User: {
+    name: (obj) => {
+      return obj.name.toUpperCase();
+    },
+  },
+};
