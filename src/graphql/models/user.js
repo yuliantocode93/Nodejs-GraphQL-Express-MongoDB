@@ -29,7 +29,9 @@ export const resolvers = {
   },
 
   Mutation: {
-    createUser: (_, { user }) => {
+    createUser: async (_, { user }, context) => {
+      const movies = await context.client.db("sample_mflix").collection("movies").find().toArray();
+      console.log(movies);
       // insert to DB
 
       return {
